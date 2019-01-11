@@ -13,4 +13,8 @@ class Task < Post
     dead_line   = "Крайний срок: #{@due_date.strftime('%Y.%m.%d')}"
     [time_string, @text, dead_line]
   end
+
+  def to_db_hash
+    super.merge(text: @text, due_date: @due_date.to_s)
+  end
 end

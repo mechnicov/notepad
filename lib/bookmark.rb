@@ -11,4 +11,8 @@ class Bookmark < Post
     time_string = "Создано: #{@created_at.strftime('%d.%m.%Y, %H:%M:%S')}\n\n"
     [@url, @text, time_string]
   end
+
+  def to_db_hash
+    super.merge(text: @text, url: @url)
+  end
 end
