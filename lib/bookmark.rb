@@ -1,5 +1,5 @@
 class Bookmark < Post
-  def read_from_console
+  def get_from_console
     STDOUT.puts 'Введите адрес'
     @url = STDIN.gets.chomp
 
@@ -14,5 +14,11 @@ class Bookmark < Post
 
   def to_db_hash
     super.merge(text: @text, url: @url)
+  end
+
+  def load_data(data_hash)
+    super(data_hash)
+    @url = data_hash[:url]
+    @text = data_hash[:text]
   end
 end

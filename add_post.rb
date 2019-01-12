@@ -16,7 +16,7 @@ end
 choice = choice.to_i - 1
 
 entry = Post.create(choices[choice])
-entry.read_from_console
+entry.get_from_console
 id = entry.save_to_db
 
 STDOUT.puts "Запись успешно сохранена с id #{id}"

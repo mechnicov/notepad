@@ -1,6 +1,8 @@
 require 'sqlite3'
 
 class Post
+  SQLITE_DB_FILE = "#{__dir__}/../notepad.sqlite".freeze
+
   def self.post_types
     { Bookmark: Bookmark, Memo: Memo, Task: Task }
   end
@@ -9,11 +11,46 @@ class Post
     post_types[type].new
   end
 
+  def self.find(type, id, limit)
+    db = SQLite3::Database.open(SQLITE_DB_FILE)
+
+    if id.nil?
+      db.results_as_hash = false
+      query = "SELECT rowid, * FROM posts "
+      query += "WHERE type = :type " unless type.nil?
+      query += "ORDER by rowid DESC "
+      query += "LIMIT :limit " unless limit.nil?
+
+      statement = db.prepare(query)
+      statement.bind_param('type', type) unless type.nil?
+      statement.bind_param('limit', limit) unless limit.nil?
+
+      result = statement.execute!
+
+      statement.close
+      db.close
+
+      result
+    else
+      db.results_as_hash = true
+      result = db.execute("SELECT * FROM posts WHERE rowid = ?", id)
+      db.close
+
+      return nil if result.empty?
+
+      result = result.first.select { |k, v| k.is_a? String }.to_h.map { |k, v| [k.to_sym, v] }.to_h
+
+      post = self.create(result[:type].to_sym)
+      post.load_data(result)
+      post
+    end
+  end
+
   def initialize
     @created_at = Time.now
   end
 
-  def read_from_console; end
+  def get_from_console; end
 
   def to_strings; end
 
@@ -31,7 +68,7 @@ class Post
   end
 
   def save_to_db
-    db = SQLite3::Database.open("#{__dir__}/../notepad.sqlite")
+    db = SQLite3::Database.open(SQLITE_DB_FILE)
     db.results_as_hash = true
 
     db.execute("INSERT INTO posts (#{to_db_hash.keys.join(',')}) VALUES (#{('?,' * to_db_hash.keys.size).chomp(',')})", to_db_hash.values)
@@ -42,5 +79,9 @@ class Post
 
   def to_db_hash
     { type: self.class.name, created_at: @created_at.to_s }
+  end
+
+  def load_data(data_hash)
+    @created_at = Time.parse(data_hash[:created_at])
   end
 end

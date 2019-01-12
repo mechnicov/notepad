@@ -1,6 +1,6 @@
 require 'date'
 class Task < Post
-  def read_from_console
+  def get_from_console
     STDOUT.puts 'Что нужно сделать?'
     @text = STDIN.gets.chomp
 
@@ -16,5 +16,11 @@ class Task < Post
 
   def to_db_hash
     super.merge(text: @text, due_date: @due_date.to_s)
+  end
+
+  def load_data(data_hash)
+    super(data_hash)
+    @due_date = Date.parse(data_hash[:due_date])
+    @text = data_hash[:text]
   end
 end

@@ -1,5 +1,5 @@
 class Memo < Post
-  def read_from_console
+  def get_from_console
     STDOUT.puts "Пишите заметку, когда закончите, на новой строке наберите 'end'"
 
     @text = []
@@ -19,5 +19,10 @@ class Memo < Post
 
   def to_db_hash
     super.merge(text: @text.join('\n'))
+  end
+
+  def load_data(data_hash)
+    super(data_hash)
+    @text = data_hash[:text].split('\n')
   end
 end
