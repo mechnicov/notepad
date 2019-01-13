@@ -18,13 +18,12 @@ OptionParser.new do |opt|
   opt.on('--limit NUMBER', 'количество последних постов(по умолчанию все)') { |o| options[:limit] = o }
 end.parse!
 
-result = Post.find(options[:type], options[:id], options[:limit])
-
-if result.nil?
-  STDOUT.puts "id#{options[:id]} не найден"
-elsif result.is_a? Post
+if options[:id]
+  result = Post.find_by_id(options[:id])
+  raise "id#{options[:id]} не найден" if result.nil?
   STDOUT.puts "Запись #{result.class.name}, id#{options[:id]}", result.to_strings
 else
+  result = Post.find_all(options[:type], options[:limit])
   STDOUT.print "\n", '|         id          ' \
                      '|        type         ' \
                      '|     created_at      ' \

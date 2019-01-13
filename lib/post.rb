@@ -11,39 +11,40 @@ class Post
     post_types[type].new
   end
 
-  def self.find(type, id, limit)
+  def self.find_by_id(id)
     db = SQLite3::Database.open(SQLITE_DB_FILE)
+    db.results_as_hash = true
+    result = db.execute("SELECT * FROM posts WHERE rowid = ?", id)
+    db.close
 
-    if id.nil?
-      db.results_as_hash = false
-      query = "SELECT rowid, * FROM posts "
-      query += "WHERE type = :type " unless type.nil?
-      query += "ORDER by rowid DESC "
-      query += "LIMIT :limit " unless limit.nil?
+    return nil if result.empty?
 
-      statement = db.prepare(query)
-      statement.bind_param('type', type) unless type.nil?
-      statement.bind_param('limit', limit) unless limit.nil?
+    result = result.first.select { |k, v| k.is_a? String }.to_h.map { |k, v| [k.to_sym, v] }.to_h
 
-      result = statement.execute!
+    post = self.create(result[:type].to_sym)
+    post.load_data(result)
+    post
+  end
 
-      statement.close
-      db.close
+  def self.find_all(type, limit)
+    db = SQLite3::Database.open(SQLITE_DB_FILE)
+    db.results_as_hash = false
 
-      result
-    else
-      db.results_as_hash = true
-      result = db.execute("SELECT * FROM posts WHERE rowid = ?", id)
-      db.close
+    query = "SELECT rowid, * FROM posts "
+    query += "WHERE type = :type " unless type.nil?
+    query += "ORDER by rowid DESC "
+    query += "LIMIT :limit " unless limit.nil?
 
-      return nil if result.empty?
+    statement = db.prepare(query)
+    statement.bind_param('type', type) unless type.nil?
+    statement.bind_param('limit', limit) unless limit.nil?
 
-      result = result.first.select { |k, v| k.is_a? String }.to_h.map { |k, v| [k.to_sym, v] }.to_h
+    result = statement.execute!
 
-      post = self.create(result[:type].to_sym)
-      post.load_data(result)
-      post
-    end
+    statement.close
+    db.close
+
+    result
   end
 
   def initialize
@@ -71,7 +72,8 @@ class Post
     db = SQLite3::Database.open(SQLITE_DB_FILE)
     db.results_as_hash = true
 
-    db.execute("INSERT INTO posts (#{to_db_hash.keys.join(',')}) VALUES (#{('?,' * to_db_hash.keys.size).chomp(',')})", to_db_hash.values)
+    db.execute("INSERT INTO posts (#{to_db_hash.keys.join(',')})
+                  VALUES (#{('?,' * to_db_hash.keys.size).chomp(',')})", to_db_hash.values)
     insert_row_id = db.last_insert_row_id
     db.close
     insert_row_id
