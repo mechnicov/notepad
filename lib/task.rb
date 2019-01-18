@@ -1,11 +1,10 @@
-require 'date'
 class Task < Post
-  def get_from_console
-    puts 'What should be done?'
-    @text = STDIN.gets.chomp
+  def getdata
+    @post_io.output('What should be done?')
+    @text = @post_io.input
 
-    puts 'What date (dd.mm.yyyy) do you need to do this?'
-    @due_date = Date.parse(STDIN.gets.chomp)
+    @post_io.output('What date (dd.mm.yyyy) do you need to do this?')
+    @due_date = Date.parse(@post_io.input)
   end
 
   def to_strings

@@ -1,12 +1,12 @@
 class Memo < Post
-  def get_from_console
-    puts "Write your memo. When done, type 'end' on the new line."
+  def getdata
+    @post_io.output("Write your memo. When done, type 'end' on the new line.")
 
     @text = []
     line = nil
 
     while line != 'end'
-      line = STDIN.gets.chomp
+      line = @post_io.input
       @text << line
     end
 

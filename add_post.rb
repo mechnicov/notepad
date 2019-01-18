@@ -1,10 +1,13 @@
+require_relative 'lib/post_io'
 require_relative 'lib/post'
 require_relative 'lib/bookmark'
 require_relative 'lib/memo'
 require_relative 'lib/task'
 
+post_io = PostIO.new
 
-STDOUT.puts 'Notepad', 'What do you want to post?'
+post_io.output('Notepad')
+post_io.output('What do you want to post?')
 
 choices = Post.post_types.keys
 
@@ -15,8 +18,8 @@ until ("1".."#{choices.size}").include? choice
 end
 choice = choice.to_i - 1
 
-entry = Post.create(choices[choice])
-entry.get_from_console
+entry = Post.create(choices[choice], post_io)
+entry.getdata
 id = entry.save_to_db
 
-STDOUT.puts "Post saved successfully with id#{id}"
+post_io.output("Post saved successfully with id#{id}")

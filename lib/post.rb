@@ -1,4 +1,5 @@
 require 'sqlite3'
+require 'date'
 
 class Post
   SQLITE_DB_FILE = "#{__dir__}/../notepad.db".freeze
@@ -7,8 +8,8 @@ class Post
     { Bookmark: Bookmark, Memo: Memo, Task: Task }
   end
 
-  def self.create(type)
-    post_types[type].new
+  def self.create(type, post_io)
+    post_types[type].new(post_io)
   end
 
   def self.find_by_id(id)
@@ -47,8 +48,9 @@ class Post
     result
   end
 
-  def initialize
+  def initialize(post_io)
     @created_at = Time.now
+    @post_io = post_io
   end
 
   def get_from_console; end

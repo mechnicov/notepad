@@ -1,10 +1,10 @@
 class Bookmark < Post
-  def get_from_console
-    puts 'Enter URL'
-    @url = STDIN.gets.chomp
+  def getdata
+    @post_io.output('Enter URL')
+    @url = @post_io.input
 
-    puts 'What is it?'
-    @text = STDIN.gets.chomp
+    @post_io.output('What is it?')
+    @text = @post_io.input
   end
 
   def to_strings
