@@ -9,34 +9,34 @@ options = {}
 OptionParser.new do |opt|
   opt.banner = 'Usage: notepad.rb [options]'
   opt.on('-h', 'Prints this help') do
-    STDOUT.puts opt
+    puts opt
     exit
   end
 
-  opt.on('--type POST_TYPE','какой тип постов показывать (по умолчанию все типы)') { |o| options[:type] = o }
-  opt.on('--id POST_ID', 'если задан id - только этот пост') { |o| options[:id] = o }
-  opt.on('--limit NUMBER', 'количество последних постов(по умолчанию все)') { |o| options[:limit] = o }
+  opt.on('--id POST_ID', 'show only post with specified id') { |o| options[:id] = o }
+  opt.on('--type POST_TYPE','what type of posts to show (all types by default)') { |o| options[:type] = o }
+  opt.on('--limit NUMBER', 'number of recent posts (all posts by default)') { |o| options[:limit] = o }
 end.parse!
 
 if options[:id]
   result = Post.find_by_id(options[:id])
-  raise "id#{options[:id]} не найден" if result.nil?
-  STDOUT.puts "Запись #{result.class.name}, id#{options[:id]}", result.to_strings
+  raise "id#{options[:id]} not found" if result.nil?
+  puts "Post #{result.class.name}, id#{options[:id]}", result.to_strings
 else
   result = Post.find_all(options[:type], options[:limit])
-  STDOUT.print "\n", '|         id          ' \
-                     '|        type         ' \
-                     '|     created_at      ' \
-                     '|        text         ' \
-                     '|         url         ' \
-                     '|      due_date       |'
-  STDOUT.puts "\n", '_' * 133
+  print "\n", '|         id          ' \
+              '|        type         ' \
+              '|     created_at      ' \
+              '|        text         ' \
+              '|         url         ' \
+              '|      due_date       |'
+  puts "\n", '_' * 133
 
   result.each do |row|
     row.each do |element|
       content = "#{element.to_s.delete('\n')[0..18]}"
-      STDOUT.print '| ', content, ' ' * (20 - content.size)
+      print '| ', content, ' ' * (20 - content.size)
     end
-    STDOUT.print "|\n"
+    print "|\n"
   end
 end

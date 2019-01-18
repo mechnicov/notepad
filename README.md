@@ -1,24 +1,40 @@
-### Блокнот
+## Notepad
 
-Программа для создания заметок, закладок, составления задач.
+Program for writing memos, bookmarks and tasks.
 
-Написана на Ruby.
+Written in Ruby.
 
-Файлы с заметками сохраняются в папку `posts`.
+### Adding posts
 
-Для запуска программы введите в консоли:
+To add a new post, enter in the terminal:
 
 ```
-ruby notepad.rb
+ruby add_post.rb
 ```
 
-### Лицензия
+Posts are saved to `notepad.db` using the` sqlite3` gem
 
-MIT – см. `LICENSE`
+### Viewing Notepad
 
-### Контакты
+To view the posts, type in the terminal:
 
-Пишите мне по адресу
+```
+ruby notepad.rb [options]
+```
+
+For help:
+
+```
+ruby notepad.rb -h
+```
+
+### License
+
+MIT – see `LICENSE`
+
+### Contacts
+
+Email me at
 
 ```
 'dcdl-snotynu?fl`hk-bnl'.each_char.map(&:succ).join

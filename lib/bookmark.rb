@@ -1,14 +1,14 @@
 class Bookmark < Post
   def get_from_console
-    STDOUT.puts 'Введите адрес'
+    puts 'Enter URL'
     @url = STDIN.gets.chomp
 
-    STDOUT.puts 'Что это?'
+    puts 'What is it?'
     @text = STDIN.gets.chomp
   end
 
   def to_strings
-    time_string = "Создано: #{@created_at.strftime('%d.%m.%Y, %H:%M:%S')}\n\n"
+    time_string = "Created at: #{@created_at.strftime('%d.%m.%Y, %H:%M:%S')}\n\n"
     [@url, @text, time_string]
   end
 

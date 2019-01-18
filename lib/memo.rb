@@ -1,6 +1,6 @@
 class Memo < Post
   def get_from_console
-    STDOUT.puts "Пишите заметку, когда закончите, на новой строке наберите 'end'"
+    puts "Write your memo. When done, type 'end' on the new line."
 
     @text = []
     line = nil
@@ -14,7 +14,7 @@ class Memo < Post
   end
 
   def to_strings
-    @text.unshift("Создано: #{@created_at.strftime('%d.%m.%Y, %H:%M:%S')}\n\n")
+    @text.unshift("Created at: #{@created_at.strftime('%d.%m.%Y, %H:%M:%S')}\n\n")
   end
 
   def to_db_hash

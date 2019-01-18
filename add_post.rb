@@ -4,7 +4,7 @@ require_relative 'lib/memo'
 require_relative 'lib/task'
 
 
-STDOUT.puts 'Блокнот', 'Что хотите записать?'
+STDOUT.puts 'Notepad', 'What do you want to post?'
 
 choices = Post.post_types.keys
 
@@ -19,4 +19,4 @@ entry = Post.create(choices[choice])
 entry.get_from_console
 id = entry.save_to_db
 
-STDOUT.puts "Запись успешно сохранена с id #{id}"
+STDOUT.puts "Post saved successfully with id#{id}"
