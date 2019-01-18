@@ -1,7 +1,7 @@
 require 'sqlite3'
 
 class Post
-  SQLITE_DB_FILE = "#{__dir__}/../notepad.sqlite".freeze
+  SQLITE_DB_FILE = "#{__dir__}/../notepad.db".freeze
 
   def self.post_types
     { Bookmark: Bookmark, Memo: Memo, Task: Task }
@@ -72,8 +72,14 @@ class Post
     db = SQLite3::Database.open(SQLITE_DB_FILE)
     db.results_as_hash = true
 
-    db.execute("INSERT INTO posts (#{to_db_hash.keys.join(',')})
-                  VALUES (#{('?,' * to_db_hash.keys.size).chomp(',')})", to_db_hash.values)
+    begin
+      db.execute("INSERT INTO posts (#{to_db_hash.keys.join(',')})
+                    VALUES (#{('?,' * to_db_hash.keys.size).chomp(',')})", to_db_hash.values)
+    rescue SQLite3::SQLException
+      db.execute('CREATE TABLE posts (type STRING, created_at DATETIME, text TEXT, url TEXT, due_date DATETIME)')
+      retry
+    end
+
     insert_row_id = db.last_insert_row_id
     db.close
     insert_row_id
